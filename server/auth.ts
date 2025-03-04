@@ -69,9 +69,10 @@ export function setupAuth(app: Express) {
       password: await hashPassword(req.body.password),
     });
 
-    req.login(user, (err) => {
-      if (err) return next(err);
-      res.status(201).json(user);
+    // Don't automatically log in the user
+    res.status(201).json({ 
+      success: true,
+      message: "Registration successful. Please log in."
     });
   });
 
