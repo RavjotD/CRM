@@ -19,11 +19,11 @@ async function resetAndCreateAdmin() {
     
     console.log("Clearing all existing users...");
     
-    // Get all users and delete them (by recreating the users Map)
+    // Get all users first for logging
     const users = await storage.getAllUsers();
     console.log(`Found ${users.length} existing users, removing them all...`);
     
-    // This is a hacky way to clear all users since we're using in-memory storage
+    // Clear the users map in storage
     // @ts-ignore - accessing private property
     storage.users = new Map();
     
@@ -39,11 +39,20 @@ async function resetAndCreateAdmin() {
       isAdmin: true,
     });
     
+    // Verify the user was created
+    const verifyUser = await storage.getUserByUsername(username);
+    if (!verifyUser) {
+      console.error("Failed to create admin user!");
+      process.exit(1);
+    }
+    
     console.log(`Admin user created successfully with ID: ${adminUser.id}`);
+    console.log(`Admin status: ${verifyUser.isAdmin ? "YES" : "NO"}`);
     console.log("You can now log in with:");
     console.log(`Username: ${username}`);
     console.log(`Password: ${password}`);
     
+    // Return success
     process.exit(0);
   } catch (error) {
     console.error("Error:", error);

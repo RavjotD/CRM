@@ -54,6 +54,17 @@ export class MemStorage implements IStorage {
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000,
     });
+
+    // Simulate persistence using localStorage (for demonstration only)
+    const storedUsers = localStorage.getItem('users');
+    if (storedUsers) {
+      this.users = new Map(JSON.parse(storedUsers));
+      this.currentId = Math.max(...this.users.keys(), 0) + 1;
+    }
+
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('users', JSON.stringify(Array.from(this.users.entries())));
+    });
   }
 
   // User operations
@@ -89,11 +100,11 @@ export class MemStorage implements IStorage {
     this.users.set(userId, user);
     return user;
   }
-  
+
   async setUserData(userId: number, userData: Partial<User>): Promise<User | undefined> {
     const user = this.users.get(userId);
     if (!user) return undefined;
-    
+
     const updatedUser = { ...user, ...userData };
     this.users.set(userId, updatedUser);
     return updatedUser;
