@@ -66,9 +66,13 @@ export class MemStorage implements IStorage {
     );
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createUser(insertUser: InsertUser & { isAdmin?: boolean }): Promise<User> {
     const id = this.currentId++;
-    const user: User = { ...insertUser, id, isAdmin: false }; // Added isAdmin default to false
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      isAdmin: insertUser.isAdmin === true ? true : false 
+    };
     this.users.set(id, user);
     return user;
   }
