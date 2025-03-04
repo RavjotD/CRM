@@ -9,6 +9,7 @@ import {
   CheckSquare,
   LogOut,
   LayoutDashboard,
+  ShieldCheck
 } from "lucide-react";
 
 const links = [
@@ -44,6 +45,19 @@ export default function Sidebar() {
             </a>
           </Link>
         ))}
+        {user.isAdmin && (
+          <Link href="/admin">
+            <a
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-md mb-1 hover:bg-accent",
+                location === "/admin" && "bg-accent"
+              )}
+            >
+              <ShieldCheck className="h-5 w-5" />
+              Admin
+            </a>
+          </Link>
+        )}
       </nav>
 
       <div className="p-4 border-t">

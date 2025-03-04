@@ -9,8 +9,35 @@ function isAuthenticated(req: Express.Request, res: Express.Response, next: Expr
   res.sendStatus(401);
 }
 
+function isAdmin(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+  if (req.isAuthenticated() && req.user!.isAdmin) return next();
+  res.sendStatus(403);
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+  
+  // Admin routes
+  app.get("/api/admin/users", isAdmin, async (req, res) => {
+    const allUsers = await storage.getAllUsers();
+    res.json(allUsers);
+  });
+  
+  app.patch("/api/admin/users/:id", isAdmin, async (req, res) => {
+    const userId = parseInt(req.params.id);
+    const { isAdmin } = req.body;
+    
+    if (typeof isAdmin !== 'boolean') {
+      return res.status(400).json({ error: "isAdmin must be a boolean" });
+    }
+    
+    try {
+      const updatedUser = await storage.setAdminStatus(userId, isAdmin);
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
 
   // Leads routes
   app.get("/api/leads", isAuthenticated, async (req, res) => {

@@ -9,6 +9,8 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getAllUsers(): Promise<User[]>; // Added to get all users
+  setAdminStatus(userId: number, isAdmin: boolean): Promise<User | undefined>; // Added to manage admin status
 
   // Lead operations
   getLeads(userId: number): Promise<Lead[]>;
@@ -66,8 +68,20 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { ...insertUser, id, isAdmin: false }; // Added isAdmin default to false
     this.users.set(id, user);
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+
+  async setAdminStatus(userId: number, isAdmin: boolean): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    user.isAdmin = isAdmin;
+    this.users.set(userId, user);
     return user;
   }
 
