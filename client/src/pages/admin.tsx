@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
@@ -100,7 +99,7 @@ export default function AdminDashboard() {
                     <TableCell>
                       <Switch 
                         checked={user.isAdmin} 
-                        disabled={user.id === req.user?.id}
+                        disabled={user.id === window.user?.id}
                         onCheckedChange={() => toggleAdminStatus(user.id, user.isAdmin)}
                       />
                     </TableCell>
@@ -108,7 +107,7 @@ export default function AdminDashboard() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        disabled={user.id === req.user?.id}
+                        disabled={user.id === window.user?.id}
                         onClick={() => toggleAdminStatus(user.id, user.isAdmin)}
                       >
                         {user.isAdmin ? "Remove Admin" : "Make Admin"}
