@@ -1,18 +1,20 @@
 
 // Script to make a user an admin
-import { db } from "../server/storage";
-import { users } from "../shared/schema";
-import { eq } from "drizzle-orm";
+import { storage } from "../server/storage.ts";
 
 async function makeAdmin(username: string) {
   try {
-    const result = await db.update(users)
-      .set({ isAdmin: true })
-      .where(eq(users.username, username))
-      .returning();
+    const user = await storage.getUserByUsername(username);
     
-    if (result.length === 0) {
+    if (!user) {
       console.error(`User ${username} not found`);
+      process.exit(1);
+    }
+    
+    const updatedUser = await storage.setAdminStatus(user.id, true);
+    
+    if (!updatedUser) {
+      console.error(`Failed to update user ${username}`);
       process.exit(1);
     }
     
