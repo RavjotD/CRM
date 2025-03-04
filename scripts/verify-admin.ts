@@ -28,9 +28,9 @@ async function verifyAdmin() {
     console.log(`Found user ${username} with ID: ${user.id}`);
     console.log(`Admin status: ${user.isAdmin ? "YES" : "NO"}`);
     
-    // For security, we won't verify the password here, but you can use:
-    // const passwordMatch = await comparePasswords(password, user.password);
-    // console.log(`Password matches: ${passwordMatch ? "YES" : "NO"}`);
+    // Verify password
+    const passwordMatch = await comparePasswords(password, user.password);
+    console.log(`Password matches: ${passwordMatch ? "YES" : "NO"}`);
     
     process.exit(0);
   } catch (error) {

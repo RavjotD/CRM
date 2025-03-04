@@ -43,11 +43,26 @@ export function setupAuth(app: Express) {
 
   passport.use(
     new LocalStrategy(async (username, password, done) => {
-      const user = await storage.getUserByUsername(username);
-      if (!user || !(await comparePasswords(password, user.password))) {
-        return done(null, false);
-      } else {
+      try {
+        console.log(`Login attempt: ${username}`);
+        const user = await storage.getUserByUsername(username);
+        
+        if (!user) {
+          console.log(`User not found: ${username}`);
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+        
+        const isValid = await comparePasswords(password, user.password);
+        console.log(`Password valid: ${isValid}`);
+        
+        if (!isValid) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+        
         return done(null, user);
+      } catch (error) {
+        console.error("Login error:", error);
+        return done(error);
       }
     }),
   );
@@ -76,8 +91,31 @@ export function setupAuth(app: Express) {
     });
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  app.post("/api/login", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+      if (err) {
+        console.error("Authentication error:", err);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+      }
+      
+      if (!user) {
+        console.log("Authentication failed:", info?.message || "Unknown reason");
+        return res.status(401).json({ 
+          success: false, 
+          message: info?.message || "Invalid username or password" 
+        });
+      }
+      
+      req.login(user, (loginErr) => {
+        if (loginErr) {
+          console.error("Login error:", loginErr);
+          return res.status(500).json({ success: false, message: "Failed to establish session" });
+        }
+        
+        console.log(`User logged in: ${user.username} (ID: ${user.id})`);
+        return res.status(200).json(user);
+      });
+    })(req, res, next);
   });
 
   app.post("/api/logout", (req, res, next) => {
