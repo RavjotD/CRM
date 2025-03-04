@@ -49,7 +49,15 @@ export default function AuthPage() {
 
               <TabsContent value="login">
                 <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
+                  <form onSubmit={loginForm.handleSubmit((data) => {
+                    loginMutation.mutate(data, {
+                      onError: (error) => {
+                        console.error("Login failed:", error);
+                        // Assuming toast is available from a library like react-hot-toast
+                        toast.error(error.message || "Invalid username or password");
+                      }
+                    });
+                  })}>
                     <FormField
                       control={loginForm.control}
                       name="username"
