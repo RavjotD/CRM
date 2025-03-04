@@ -10,7 +10,7 @@ function isAuthenticated(req: Express.Request, res: Express.Response, next: Expr
 }
 
 function isAdmin(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
-  if (req.isAuthenticated() && req.user!.isAdmin) return next();
+  if (req.isAuthenticated() && req.user!.isAdmin && req.user!.id === 1) return next();
   res.sendStatus(403);
 }
 

@@ -21,7 +21,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.isAdmin) {
+    // Only allow the primary admin (you) to access this page
+    if (!user?.isAdmin || user.id !== 1) {
       navigate("/dashboard");
       return;
     }
@@ -67,7 +68,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!user?.isAdmin) {
+  if (!user?.isAdmin || user.id !== 1) {
     return null;
   }
 

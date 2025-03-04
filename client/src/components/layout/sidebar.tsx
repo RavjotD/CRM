@@ -45,7 +45,8 @@ export default function Sidebar() {
             </a>
           </Link>
         ))}
-        {user.isAdmin && (
+        {/* Only show admin link to the first admin user (you) */}
+        {user.isAdmin && user.id === 1 && (
           <Link href="/admin">
             <a
               className={cn(
