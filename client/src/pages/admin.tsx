@@ -21,8 +21,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only allow the primary admin (you) to access this page
-    if (!user?.isAdmin || user.id !== 1) {
+    // Only allow admin users to access this page
+    if (!user?.isAdmin) {
       navigate("/dashboard");
       return;
     }
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!user?.isAdmin || user.id !== 1) {
+  if (!user?.isAdmin) {
     return null;
   }
 
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
                     <TableCell>
                       <Switch 
                         checked={user.isAdmin} 
-                        disabled={user.id === window.user?.id}
+                        disabled={user.id === req.user?.id}
                         onCheckedChange={() => toggleAdminStatus(user.id, user.isAdmin)}
                       />
                     </TableCell>
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        disabled={user.id === window.user?.id}
+                        disabled={user.id === req.user?.id}
                         onClick={() => toggleAdminStatus(user.id, user.isAdmin)}
                       >
                         {user.isAdmin ? "Remove Admin" : "Make Admin"}
