@@ -6,7 +6,7 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  isAdmin: boolean("is_admin").notNull().default(false),
+  isAdmin: boolean("is_admin").notNull().default(false), // We'll keep this but not use it
 });
 
 export const leads = pgTable("leads", {

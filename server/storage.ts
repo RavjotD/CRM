@@ -9,9 +9,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  getAllUsers(): Promise<User[]>; // Added to get all users
-  setAdminStatus(userId: number, isAdmin: boolean): Promise<User | undefined>; // Added to manage admin status
-  setUserData(userId: number, userData: Partial<User>): Promise<User | undefined>; // Added to update user data
+  getAllUsers(): Promise<User[]>; 
 
   // Lead operations
   getLeads(userId: number): Promise<Lead[]>;
