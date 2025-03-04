@@ -44,16 +44,20 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
-        console.log(`Login attempt: ${username}`);
-        const user = await storage.getUserByUsername(username);
+        // Simplify to just create a new user if not exists
+        let user = await storage.getUserByUsername(username);
         
         if (!user) {
-          console.log(`User not found: ${username}`);
-          return done(null, false, { message: 'Incorrect username.' });
+          // Auto-create user if they don't exist
+          user = await storage.createUser({
+            username,
+            password: await hashPassword(password)
+          });
+          console.log(`Created new user: ${username}`);
+          return done(null, user);
         }
         
         const isValid = await comparePasswords(password, user.password);
-        console.log(`Password valid: ${isValid}`);
         
         if (!isValid) {
           return done(null, false, { message: 'Incorrect password.' });

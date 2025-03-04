@@ -67,12 +67,12 @@ export class MemStorage implements IStorage {
     );
   }
 
-  async createUser(insertUser: InsertUser & { isAdmin?: boolean }): Promise<User> {
+  async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
     const user: User = { 
       ...insertUser, 
       id, 
-      isAdmin: insertUser.isAdmin === true ? true : false 
+      isAdmin: false
     };
     this.users.set(id, user);
     return user;
@@ -80,23 +80,6 @@ export class MemStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     return Array.from(this.users.values());
-  }
-
-  async setAdminStatus(userId: number, isAdmin: boolean): Promise<User | undefined> {
-    const user = this.users.get(userId);
-    if (!user) return undefined;
-    user.isAdmin = isAdmin;
-    this.users.set(userId, user);
-    return user;
-  }
-
-  async setUserData(userId: number, userData: Partial<User>): Promise<User | undefined> {
-    const user = this.users.get(userId);
-    if (!user) return undefined;
-
-    const updatedUser = { ...user, ...userData };
-    this.users.set(userId, updatedUser);
-    return updatedUser;
   }
 
   // Lead operations
