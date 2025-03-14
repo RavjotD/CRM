@@ -1,3 +1,4 @@
+
 import { defineConfig } from "drizzle-kit";
 
 // Update DATABASE_URL environment variable to point to Replit's PostgreSQL database.
