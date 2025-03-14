@@ -1,10 +1,20 @@
 import express, { type Request, Response, NextFunction } from "express";
+import rateLimit from 'express-rate-limit';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+app.use(limiter);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -79,7 +89,7 @@ app.use((req, res, next) => {
 
   const startServer = async () => {
     const ports = [5000, 3000, 8080, 8000];
-    
+
     for (const port of ports) {
       try {
         await tryPort(port);
