@@ -1,4 +1,4 @@
-
+// script to run for refreshing userbase
 import { storage } from "../server/storage";
 
 async function clearAllUsers() {
